@@ -1,7 +1,7 @@
 OOJS Arcade Game: "Frogger"
 ===============================
 <h2>Description</h2>
-Developed a cross-browser arcade game "Frogger" similar to the classic game "Frogger". Added some additional functions to the basic functionality.<br>
+Developed a cross-browser arcade game similar to the classic game "Frogger". Added some additional functions to the basic functionality.<br>
 Broken the application down into simpler entities that manage their own properties and functionality.<br>
 Coded app.js to implemented player, enemy, star and other game entities with JavaScript's object-oriented pseudo-classical pattern.<br>
 Coded engine.js to provide the game loop, resources.js to load and cache all images the game needed.
