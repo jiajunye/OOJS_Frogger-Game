@@ -72,7 +72,7 @@ Player.prototype.render = function() {
 
 // Handle user's keyborad input
 Player.prototype.handleInput = function(keyboardInput) {
-    if(!keyboardInput)
+    if(!keyboardInput || startPage || gameOverPage)
         return;
 
     // Handle four user input cases
@@ -97,7 +97,7 @@ Player.prototype.handleInput = function(keyboardInput) {
         case 'down':
             // Once player step into the stone area, he can not
             // move back to grass area
-            if((onGame && this.y >= 297) ||(!onGame && this.y >= 463))
+            if((onGame && this.y >= 297) ||(!onGame && this.y >= 380))
                 return;
             this.y += 83;
             break;
