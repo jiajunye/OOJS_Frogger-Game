@@ -18,19 +18,24 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
         startPage = true;
+        gameOverPage = false;
         onGame = false;
+        currentScore = 0;
         score = 0;
         best = 0;
 
     canvas.width = 707;
-    canvas.height = 707;
+    canvas.height = 606;
     doc.body.appendChild(canvas);
 
 
-    // Only press enter from user's keyboard can start the game
+    // Only press enter from user's keyboard can start and restart the game
     function handleKeyPress(evt) {
         if(startPage && evt === 13) {
             startPage = false;
+        }
+        if(gameOverPage && evt == 13) {
+            gameOverPage = false;
         }
     }
 
@@ -90,6 +95,8 @@ var Engine = (function(global) {
     function updateEntities(dt) {
         if(startPage)
             return;
+        if(gameOverPage)
+            return;
         player.update();
         if(player.y < 380)
             onGame = true;
@@ -111,6 +118,8 @@ var Engine = (function(global) {
         });
     }
 
+    // Check collision between player and star, according to their positions
+    // If collided, add one point for player
     function checkScore() {
         if(star.x - 70 < player.x && star.x + 70 > player.x 
             && star.y - 30 < player.y && star.y + 30 > player.y) {
@@ -135,10 +144,9 @@ var Engine = (function(global) {
                 'images/stone-block.png',   // Row 2 of 4 of stone
                 'images/stone-block.png',   // Row 3 of 4 of stone
                 'images/stone-block.png',   // Row 4 of 4 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/grass-block.png',   // Bottom row is grass
             ],
-            numRows = 7,
+            numRows = 6,
             numCols = 7,
             row, col;
 
@@ -161,13 +169,29 @@ var Engine = (function(global) {
 
         player.render();
 
-        ctx.fillStyle = "#0404B4";
-        ctx.font = "bold 22px Verdana";
-
         // Start page. Press enter to start our game
         if(startPage) {
+            ctx.fillStyle = "#0404B4";
+            ctx.font = "bold 22px Verdana";
             ctx.textAlign = "center";
             ctx.fillText("Press Enter to Start", 350, 265);
+            return;
+        }
+
+        // Gameover page. Show the score. Press enter to play again
+        if(gameOverPage) {
+            ctx.fillStyle = "#FF0000";
+            ctx.font = "italic bold 34px Courier";
+            ctx.textAlign = "center";
+            ctx.fillText("Game Over", 353, 170);
+            ctx.fillStyle = "#000000";
+            ctx.font = "italic bold 22px Courier";
+            ctx.textAlign = "center";
+            ctx.fillText("Score:" + currentScore, 353, 200);
+            ctx.fillStyle = "#0404B4";
+            ctx.font = "bold 21px Verdana";
+            ctx.textAlign = "center";
+            ctx.fillText("Press Enter to Play Again", 353, 265);
             return;
         }
 
@@ -175,9 +199,10 @@ var Engine = (function(global) {
         ctx.fillStyle = "#F0FFF0";
         ctx.font = "italic 20px Verdana";
         ctx.textAlign = "left";
-        ctx.fillText("Best:" + best, 106, 660);
-        ctx.fillText("Score:" + score, 5, 660);
+        ctx.fillText("Best:" + best, 106, 577);
+        ctx.fillText("Score:" + score, 5, 577);
 
+        // The star position should reset after game over
         star.render();
 
         // Loop through all of the objects within the allEnemies array and call
@@ -192,13 +217,17 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
+        gameOverPage = true;
         player.x = 303;
         player.y = 380;
         onGame = false;
+        star.update();
+        currentScore = score;
         if(score > best)
             best = score;
         score = 0;
     }
+
 
     /* Go ahead and load all of the images we're going to need to draw our
      * game level. Then set init as the callback method, so that when all
